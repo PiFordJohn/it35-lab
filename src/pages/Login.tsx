@@ -18,34 +18,44 @@ import {
       IonToast
   } from '@ionic/react';
   import Icon1 from '../../img/Icon1.png';
-  import { eye, eyeOff } from 'ionicons/icons';
   import { useState } from 'react';
+  import { supabase } from '../utils/supabaseClient';
+  
+  const AlertBox: React.FC<{ message: string; isOpen: boolean; onClose: () => void }> = ({ message, isOpen, onClose }) => {
+    return (
+      <IonAlert
+        isOpen={isOpen}
+        onDidDismiss={onClose}
+        header="Notification"
+        message={message}
+        buttons={['OK']}
+      />
+    );
+  };
 
   const Login: React.FC = () => {
       const navigation = useIonRouter();
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
-      const [showPassword, setShowPassword] = useState(false);
+      const [alertMessage, setAlertMessage] = useState('');
       const [showAlert, setShowAlert] = useState(false);
       const [showToast, setShowToast] = useState(false);
   
-      const doLogin = () => {
-  
-      if (email === "admin@gmail.com" && password === "password123") {
-    setShowToast(true);
+      const doLogin = async () => {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setAlertMessage(error.message);
+      setShowAlert(true);
+      return;
+    }
+
+    setShowToast(true); 
     setTimeout(() => {
       navigation.push('/it35-lab/app', 'forward', 'replace');
-    }, 1500);
-      } else {
-    
-    setAlertMessage("Invalid email or password.");
-    setShowAlert(true);
-    }
+    }, 300);
   };
 
-    const doRegister = ()=> {
-      navigation.push('/it35-lab/register', 'forward','replace');
-  }
     return (
        <IonPage>
       <IonContent className='ion-padding'>
@@ -109,7 +119,9 @@ import {
           Don't have an account? Register here
         </IonButton>
 
-
+        {/* Reusable AlertBox Component */}
+        <AlertBox message={alertMessage} isOpen={showAlert} onClose={() => setShowAlert(false)} />
+        
         {/* IonToast for success message */}
         <IonToast
           isOpen={showToast}
@@ -126,6 +138,3 @@ import {
   
   export default Login;
 
-function setAlertMessage(message: any) {
-      throw new Error('Function not implemented.');
-    }
