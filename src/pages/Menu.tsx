@@ -1,6 +1,6 @@
 import { 
     IonButton,
-    IonButtons,
+    IonAlert,
     IonContent, 
     IonHeader, 
     IonIcon, 
@@ -12,7 +12,9 @@ import {
     IonRouterOutlet, 
     IonSplitPane, 
     IonTitle, 
-    IonToolbar
+    IonToast, 
+    IonToolbar, 
+    useIonRouter
   } from '@ionic/react';
 
   import {homeOutline, logOutOutline, rocketOutline} from 'ionicons/icons';
@@ -20,13 +22,32 @@ import {
     import Home from './Home';
     import About from './About';
     import Details from './Details';
+    import { supabase } from '../utils/supabaseClient';
+    import { useState } from 'react';
+
   
   const Menu: React.FC = () => {
+    const navigation = useIonRouter();
+    const [showAlert, setShowAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
 
     const path = [
       {name:'Home', url: '/it35-lab/app/home', icon: homeOutline},
             {name:'About', url: '/it35-lab/app/about', icon: rocketOutline},
-  ]
+  ]  
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        setShowToast(true);
+        setTimeout(() => {
+            navigation.push('/it35-lab', 'back', 'replace'); 
+        }, 300); 
+    } else {
+        setErrorMessage(error.message);
+        setShowAlert(true);
+    }
+};
     return (
       <IonPage>
         <IonSplitPane contentId="main">
@@ -46,10 +67,10 @@ import {
                             </IonMenuToggle>
                         ))}
 
-                        {/*Logout Button*/}
-                        <IonButton routerLink="/it35-lab" routerDirection="back" expand="full">
-                            <IonIcon icon={logOutOutline} slot="start"> </IonIcon>
-                        Logout
+                        {/* Logout Button */}
+                        <IonButton expand="full" onClick={handleLogout}>
+                             <IonIcon icon={logOutOutline} slot="start"></IonIcon>
+                             Logout
                         </IonButton>
 
                     </IonContent>
@@ -63,6 +84,24 @@ import {
                     <Redirect to="/it35-lab/app/home"/>
                     </Route>
                 </IonRouterOutlet>
+                {/* IonAlert for displaying login errors */}
+                <IonAlert
+                     isOpen={showAlert}
+                     onDidDismiss={() => setShowAlert(false)}
+                     header="Logout Failed"
+                     message={errorMessage}
+                     buttons={['OK']}
+                 />
+                 
+                 {/* IonToast for success message */}
+                 <IonToast
+                     isOpen={showToast}
+                     onDidDismiss={() => setShowToast(false)}
+                     message="Logout Successful"
+                     duration={1500}
+                     position="top"
+                     color="primary"
+                 />
             </IonSplitPane>
       </IonPage>
     );
