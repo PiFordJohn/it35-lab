@@ -20,7 +20,7 @@ import {
       IonGrid,
       IonRow
   } from '@ionic/react';
-  import Icon1 from '../../img/Icon1.png';
+  import logo1 from '../../img/logo1.png';
   import { useState } from 'react';
   import { supabase } from '../utils/supabaseClient';
   
@@ -62,7 +62,7 @@ import {
     return (
        <IonPage>
       <IonContent className='ion-padding'style={{ 
-  '--background': 'url(/assets/warcraft-bg.jpg) no-repeat center center / cover' 
+  '--background': 'url(/it35-lab/assets/warcraft-bg.jpg) no-repeat center center / cover' 
      }}>
 
       <IonGrid>
@@ -88,7 +88,7 @@ import {
             }}
           >
             <img 
-             src={Icon1}
+             src={logo1}
             alt="User Avatar"
             style={{
            width: '100%',
@@ -101,9 +101,12 @@ import {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            color:'white',
+            fontFamily: 'cursive',
+            fontWeight:'bolder'
           }}
           >STEAM LOGIN</h1>
-          <IonInput
+          <IonInput style={{ marginTop:'10px', color:'white', fontFamily:'cursive' }}
             label="Email" 
             labelPlacement="floating" 
             fill="outline"
@@ -112,7 +115,7 @@ import {
             value={email}
             onIonChange={e => setEmail(e.detail.value!)}
           />
-          <IonInput style={{ marginTop:'10px' }}      
+          <IonInput style={{ marginTop:'10px', color:'white', fontFamily:'cursive'}}      
             fill="outline"
             type="password"
             placeholder="Password"
@@ -122,12 +125,13 @@ import {
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
         </div>
-        <IonButton onClick={doLogin} expand="full" shape='round'>
+        <IonButton onClick={doLogin} expand="full" shape='round' color='success'>
           Login
         </IonButton>
 
-        <IonButton routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
-          Don't have an account? Register here
+        <IonButton style={{ color:'white', fontFamily:'cursive'}}
+        routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
+          Don't have an account? Sign Up !
         </IonButton>
 
         </IonCol>
