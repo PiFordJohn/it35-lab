@@ -15,7 +15,10 @@ import {
       IonInputPasswordToggle,
       IonAvatar,
       IonAlert,
-      IonToast
+      IonToast,
+      IonCol,
+      IonGrid,
+      IonRow
   } from '@ionic/react';
   import Icon1 from '../../img/Icon1.png';
   import { useState } from 'react';
@@ -59,6 +62,11 @@ import {
     return (
        <IonPage>
       <IonContent className='ion-padding'>
+
+      <IonGrid>
+       <IonRow className="ion-justify-content-center">
+        <IonCol size="12" sizeMd="6" sizeLg="4">
+
         <div style={{
           display: 'flex',
           flexDirection:'column',
@@ -91,7 +99,8 @@ import {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>USER LOGIN</h1>
+          }}
+          >STEAM LOGIN</h1>
           <IonInput
             label="Email" 
             labelPlacement="floating" 
@@ -118,6 +127,10 @@ import {
         <IonButton routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
           Don't have an account? Register here
         </IonButton>
+
+        </IonCol>
+        </IonRow>
+    </IonGrid>
 
         {/* Reusable AlertBox Component */}
         <AlertBox message={alertMessage} isOpen={showAlert} onClose={() => setShowAlert(false)} />
