@@ -61,7 +61,9 @@ import {
 
     return (
        <IonPage>
-      <IonContent className='ion-padding'>
+      <IonContent className='ion-padding'style={{ 
+  '--background': 'url(/assets/warcraft-bg.jpg) no-repeat center center / cover' 
+     }}>
 
       <IonGrid>
        <IonRow className="ion-justify-content-center">
