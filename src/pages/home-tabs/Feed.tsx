@@ -27,18 +27,6 @@ import {
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            minHeight:'100vh',
-            paddingBottom:'20px',
-          }}
-        >
-          Feed
-        </div>
         <FeedContainer />
         </IonContent>
       </IonPage>
