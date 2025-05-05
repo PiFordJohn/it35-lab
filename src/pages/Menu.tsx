@@ -24,8 +24,8 @@ import {
   const Menu: React.FC = () => {
 
     const path = [
-      {name:'Home', url: '/it35-lab/app/home', icon: homeOutline},
-            {name:'About', url: '/it35-lab/app/about', icon: rocketOutline},
+      {name:'Home', url: '/it35-final/app/home', icon: homeOutline},
+            {name:'About', url: '/it35-final/app/about', icon: rocketOutline},
   ]
     return (
       <IonPage>
@@ -47,7 +47,7 @@ import {
                         ))}
 
                         {/*Logout Button*/}
-                        <IonButton routerLink="/it35-lab" routerDirection="back" expand="full">
+                        <IonButton routerLink="/it35-final" routerDirection="back" expand="full">
                             <IonIcon icon={logOutOutline} slot="start"> </IonIcon>
                         Logout
                         </IonButton>
@@ -55,12 +55,12 @@ import {
                     </IonContent>
                 </IonMenu>
                 <IonRouterOutlet id="main">
-                    <Route exact path="/it35-lab/app/home" component={Home} />
-                    <Route exact path="/it35-lab/app/home/details" component={Details} />
-                    <Route exact path="/it35-lab/app/about" component={About} />
+                    <Route exact path="/it35-final/app/home" component={Home} />
+                    <Route exact path="/it35-final/app/home/details" component={Details} />
+                    <Route exact path="/it35-final/app/about" component={About} />
                     
-                    <Route exact path="/it35-lab/app">
-                    <Redirect to="/it35-lab/app/home"/>
+                    <Route exact path="/it35-final/app">
+                    <Redirect to="/it35-final/app/home"/>
                     </Route>
                 </IonRouterOutlet>
             </IonSplitPane>

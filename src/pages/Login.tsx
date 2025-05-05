@@ -15,7 +15,7 @@ import {
 
 
     const doLogin = ()=> {
-        navigation.push('/it35-lab/app', 'forward','replace');
+        navigation.push('/it35-final/app', 'forward','replace');
     }
     return (
       <IonPage>

@@ -25,9 +25,9 @@ import {
   const Home: React.FC = () => {
      
     const tabs = [
-      {name:'Feed', tab:'feed',url: '/it35-lab/app/home/feed', icon: bookOutline},
-      {name:'Search', tab:'search',url: '/it35-lab/app/home/search', icon: search},
-      {name:'Favorites', tab:'favorites',url: '/it35-lab/app/home/favorites', icon: star},
+      {name:'Feed', tab:'feed',url: '/it35-final/app/home/feed', icon: bookOutline},
+      {name:'Search', tab:'search',url: '/it35-final/app/home/search', icon: search},
+      {name:'Favorites', tab:'favorites',url: '/it35-final/app/home/favorites', icon: star},
       
     ]
     return (
@@ -43,11 +43,11 @@ import {
             
           </IonTabBar>
         <IonRouterOutlet>
-          <Route exact path="/it35-lab/app/home/feed" render={Feed} />
-          <Route exact path="/it35-lab/app/home/search" render={Search} />
-          <Route exact path="/it35-lab/app/home/favorites" render={Favorites} />
-          <Route exact path="/it35-lab/app/home">
-            <Redirect to="/it35-lab/app/home/feed" />
+          <Route exact path="/it35-final/app/home/feed" render={Feed} />
+          <Route exact path="/it35-final/app/home/search" render={Search} />
+          <Route exact path="/it35-final/app/home/favorites" render={Favorites} />
+          <Route exact path="/it35-final/app/home">
+            <Redirect to="/it35-final/app/home/feed" />
           </Route>
         </IonRouterOutlet>
         </IonTabs>
