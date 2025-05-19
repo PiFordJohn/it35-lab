@@ -17,7 +17,7 @@ const Report_Incident: React.FC = () => {
           <IonButtons slot='start'>
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>Incident Reports</IonTitle>
+          <IonTitle>Report Incident</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

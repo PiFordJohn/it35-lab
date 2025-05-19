@@ -1,32 +1,18 @@
-import React, { useEffect, useState } from 'react';
+// IncidentReportContainer.tsx
+import React, { useState } from 'react';
 import { supabase } from '../utils/supabaseClient';  
 import { 
-  IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-  IonInput, IonItem, IonLabel, IonList, IonTextarea, IonDatetime,
-  IonImg
+  IonButton, IonItem, IonLabel, IonInput, IonTextarea,
+  IonDatetime, IonImg 
 } from '@ionic/react';
 
-interface Incident {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  incident_date: string;
-  location: string;
-  status: string;
-  image_url?: string;
-  created_at: string;
-}
-
 const IncidentReportContainer: React.FC = () => {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [incidentDate, setIncidentDate] = useState('');
   const [location, setLocation] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -43,9 +29,7 @@ const IncidentReportContainer: React.FC = () => {
       .from('incident-images')
       .upload(filePath, file);
 
-    if (uploadError) {
-      throw uploadError;
-    }
+    if (uploadError) throw uploadError;
 
     const { data } = supabase.storage.from('incident-images').getPublicUrl(filePath);
     return data.publicUrl;
@@ -54,6 +38,7 @@ const IncidentReportContainer: React.FC = () => {
   const handleSubmit = async () => {
     setUploading(true);
     let imageUrl = null;
+
     if (imageFile) {
       try {
         imageUrl = await uploadImage(imageFile);
@@ -64,30 +49,37 @@ const IncidentReportContainer: React.FC = () => {
       }
     }
 
-    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user;
+
     if (!user) {
       alert('You must be logged in to report incidents.');
       setUploading(false);
       return;
     }
 
-    const { data, error } = await supabase.from('incidents').insert([
-      {
-        user_id: user.id,
-        title,
-        description,
-        incident_date: incidentDate,
-        location,
-        status: 'Open',
-        image_url: imageUrl,
-      },
-    ]);
+    const { data: insertedIncident, error } = await supabase.from('incidents').insert([{
+      user_id: user.id,
+      title,
+      description,
+      incident_date: incidentDate,
+      location,
+      status: 'Open',
+      image_url: imageUrl,
+    }]).select().single();
 
     if (error) {
       alert('Failed to submit incident: ' + error.message);
     } else {
       alert('Incident reported successfully!');
+
+      // Optionally log it
+      await supabase.from('incident_report_logs').insert([{
+        incident_id: insertedIncident.id,
+        user_id: user.id,
+        action: 'Created',
+      }]);
+
       // Reset form
       setTitle('');
       setDescription('');
