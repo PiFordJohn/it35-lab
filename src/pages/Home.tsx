@@ -18,16 +18,16 @@ import {
   import { bookOutline, search, star } from 'ionicons/icons';
   import { Route, Redirect } from 'react-router';
 
-  import Favorites from './home-tabs/Favorites';
-  import Feed from './home-tabs/Feed';
-  import Search from './home-tabs/Search';
+
+  import Report_Incident from './home-tabs/Report_Incident';
+import Incident_Logs from './home-tabs/Incident_Logs';
+  
   
   const Home: React.FC = () => {
      
     const tabs = [
-      {name:'Feed', tab:'feed',url: '/it35-lab/app/home/feed', icon: bookOutline},
-      {name:'Search', tab:'search',url: '/it35-lab/app/home/search', icon: search},
-      {name:'Favorites', tab:'favorites',url: '/it35-lab/app/home/favorites', icon: star},
+      {name:'Report_Incident', tab:'Report_Incident',url: '/it35-lab/app/home/Report_Incident', icon: bookOutline},
+      {name:'Incident_Logs', tab:'Incident_Logs',url: '/it35-lab/app/home/Incident_Logs', icon: star},
       
     ]
     return (
@@ -43,11 +43,10 @@ import {
             
           </IonTabBar>
         <IonRouterOutlet>
-          <Route exact path="/it35-lab/app/home/feed" render={Feed} />
-          <Route exact path="/it35-lab/app/home/search" render={Search} />
-          <Route exact path="/it35-lab/app/home/favorites" render={Favorites} />
+          <Route exact path="/it35-lab/app/home/Report_Incident" render={Report_Incident} />
+          <Route exact path="/it35-lab/app/home/Incident_Logs" render={Incident_Logs} />
           <Route exact path="/it35-lab/app/home">
-            <Redirect to="/it35-lab/app/home/feed" />
+            <Redirect to="/it35-lab/app/home/Report_Incident" />
           </Route>
         </IonRouterOutlet>
         </IonTabs>
