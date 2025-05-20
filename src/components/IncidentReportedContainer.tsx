@@ -1,17 +1,45 @@
-import React from 'react';
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonImg, IonList } from '@ionic/react';
+import React, { useState } from 'react';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonImg,
+  IonList,
+  IonRefresher,
+  IonRefresherContent,
+  RefresherEventDetail,
+} from '@ionic/react';
 import { useIncidents } from '../utils/useIncidents';
 
 interface Props {
-  refreshKey?: number; // not mandatory, just to re-render when needed
+  refreshKey?: number; // optional
 }
 
 const IncidentReportedContainer: React.FC<Props> = () => {
-  const { incidents } = useIncidents();
+  const { incidents, fetchIncidents } = useIncidents(); // get fetchIncidents for manual refresh
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+    setRefreshing(true);
+    await fetchIncidents();
+    setRefreshing(false);
+    event.detail.complete(); // notify refresher that refresh is done
+  };
 
   return (
     <div style={{ padding: 20 }}>
       <h2>All Reported Incidents</h2>
+
+      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresherContent
+          pullingIcon="arrow-down"
+          refreshingSpinner="circles"
+          pullingText="Pull to refresh"
+          refreshingText="Refreshing..."
+        />
+      </IonRefresher>
+
       <IonList>
         {incidents.map((incident) => (
           <IonCard key={incident.id}>
