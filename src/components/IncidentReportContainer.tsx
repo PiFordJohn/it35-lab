@@ -6,7 +6,11 @@ import {
   IonDatetime, IonImg
 } from '@ionic/react';
 
-const IncidentReportContainer: React.FC = () => {
+interface Props {
+  refreshList?: () => void;
+}
+
+const IncidentReportContainer: React.FC<Props> = ({ refreshList }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [incidentDate, setIncidentDate] = useState('');
@@ -103,6 +107,9 @@ const IncidentReportContainer: React.FC = () => {
       setLocation('');
       setImageFile(null);
       setPreview(null);
+
+      // Refresh the incident list immediately
+      if (refreshList) refreshList();
     }
 
     setUploading(false);

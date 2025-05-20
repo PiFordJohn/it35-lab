@@ -1,78 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../utils/supabaseClient';
-import {
-  IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-  IonImg, IonList
-} from '@ionic/react';
+import React from 'react';
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonImg, IonList } from '@ionic/react';
+import { useIncidents } from '../utils/useIncidents';
 
-interface Incident {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  incident_date: string;
-  location: string;
-  status: string;
-  image_url?: string;
-  created_at: string;
+interface Props {
+  refreshKey?: number; // not mandatory, just to re-render when needed
 }
 
-const IncidentReportedContainer: React.FC = () => {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
-
-  const resolveImageUrl = (imagePath: string): string => {
-    const { data } = supabase
-      .storage
-      .from('incident-images')
-      .getPublicUrl(imagePath);
-    return data?.publicUrl || imagePath;
-  };
-
-  const fetchIncidents = async () => {
-    const { data, error } = await supabase
-      .from('incidents')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching incidents:', error);
-      return;
-    }
-
-    const updated = data.map((incident) => ({
-      ...incident,
-      image_url: incident.image_url && !incident.image_url.startsWith('http')
-        ? resolveImageUrl(incident.image_url)
-        : incident.image_url,
-    }));
-
-    setIncidents(updated as Incident[]);
-  };
-
-  useEffect(() => {
-    fetchIncidents();
-
-    const channel = supabase
-      .channel('realtime-incidents')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'incidents',
-      }, payload => {
-        const newIncident = payload.new;
-
-        if (newIncident.image_url && !newIncident.image_url.startsWith('http')) {
-          newIncident.image_url = resolveImageUrl(newIncident.image_url);
-        }
-
-        setIncidents(prev => [newIncident as Incident, ...prev]);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+const IncidentReportedContainer: React.FC<Props> = () => {
+  const { incidents } = useIncidents();
 
   return (
     <div style={{ padding: 20 }}>
@@ -89,9 +24,7 @@ const IncidentReportedContainer: React.FC = () => {
               <p><strong>Date:</strong> {new Date(incident.incident_date).toLocaleDateString()}</p>
               <p><strong>Location:</strong> {incident.location}</p>
               <p><strong>Status:</strong> {incident.status}</p>
-              {incident.image_url && (
-                <IonImg src={incident.image_url} alt="Incident Image" />
-              )}
+              {incident.image_url && <IonImg src={incident.image_url} alt="Incident" />}
             </IonCardContent>
           </IonCard>
         ))}
