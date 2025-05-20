@@ -101,7 +101,7 @@ import {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color:'white',
+            color:'blue',
             fontFamily: 'cursive',
             fontWeight:'bolder'
           }}
