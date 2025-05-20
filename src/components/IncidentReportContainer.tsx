@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { supabase } from '../utils/supabaseClient';
 import {
   IonButton, IonItem, IonLabel, IonInput, IonTextarea,
@@ -11,12 +12,31 @@ const IncidentReportContainer: React.FC = () => {
   const [incidentDate, setIncidentDate] = useState('');
   const [location, setLocation] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setImageFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
     }
+  };
+
+  const takePhoto = async () => {
+    const image = await Camera.getPhoto({
+      quality: 80,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Camera,
+    });
+
+    const response = await fetch(image.dataUrl!);
+    const blob = await response.blob();
+    const file = new File([blob], `photo_${Date.now()}.jpeg`, { type: 'image/jpeg' });
+
+    setImageFile(file);
+    setPreview(image.dataUrl!);
   };
 
   const uploadImage = async (file: File) => {
@@ -30,7 +50,7 @@ const IncidentReportContainer: React.FC = () => {
 
     if (uploadError) throw uploadError;
 
-    return filePath; // Save relative path, not public URL
+    return filePath;
   };
 
   const handleSubmit = async () => {
@@ -70,7 +90,6 @@ const IncidentReportContainer: React.FC = () => {
       alert('Failed to submit incident: ' + error.message);
     } else {
       alert('Incident reported successfully!');
-
       await supabase.from('incident_report_logs').insert([{
         incident_id: insertedIncident.id,
         user_id: user.id,
@@ -83,7 +102,9 @@ const IncidentReportContainer: React.FC = () => {
       setIncidentDate('');
       setLocation('');
       setImageFile(null);
+      setPreview(null);
     }
+
     setUploading(false);
   };
 
@@ -114,9 +135,16 @@ const IncidentReportContainer: React.FC = () => {
         <IonLabel position="floating">Location</IonLabel>
         <IonInput value={location} onIonChange={e => setLocation(e.detail.value!)} />
       </IonItem>
-      <IonItem>
+
+      <IonItem lines="none">
         <input type="file" accept="image/*" onChange={handleFileChange} />
+        <IonButton onClick={takePhoto} expand="block">Take Photo</IonButton>
       </IonItem>
+
+      {preview && (
+        <IonImg src={preview} alt="Image Preview" style={{ margin: '20px 0' }} />
+      )}
+
       <IonButton expand="block" onClick={handleSubmit} disabled={uploading}>
         {uploading ? 'Uploading...' : 'Submit Incident'}
       </IonButton>
