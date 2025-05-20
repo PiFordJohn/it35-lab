@@ -1,9 +1,8 @@
-// IncidentReportContainer.tsx
 import React, { useState } from 'react';
-import { supabase } from '../utils/supabaseClient';  
-import { 
+import { supabase } from '../utils/supabaseClient';
+import {
   IonButton, IonItem, IonLabel, IonInput, IonTextarea,
-  IonDatetime, IonImg 
+  IonDatetime, IonImg
 } from '@ionic/react';
 
 const IncidentReportContainer: React.FC = () => {
@@ -31,17 +30,16 @@ const IncidentReportContainer: React.FC = () => {
 
     if (uploadError) throw uploadError;
 
-    const { data } = supabase.storage.from('incident-images').getPublicUrl(filePath);
-    return data.publicUrl;
+    return filePath; // Save relative path, not public URL
   };
 
   const handleSubmit = async () => {
     setUploading(true);
-    let imageUrl = null;
+    let imagePath = null;
 
     if (imageFile) {
       try {
-        imageUrl = await uploadImage(imageFile);
+        imagePath = await uploadImage(imageFile);
       } catch (e) {
         alert('Image upload failed: ' + e);
         setUploading(false);
@@ -65,7 +63,7 @@ const IncidentReportContainer: React.FC = () => {
       incident_date: incidentDate,
       location,
       status: 'Open',
-      image_url: imageUrl,
+      image_url: imagePath,
     }]).select().single();
 
     if (error) {
@@ -73,7 +71,6 @@ const IncidentReportContainer: React.FC = () => {
     } else {
       alert('Incident reported successfully!');
 
-      // Optionally log it
       await supabase.from('incident_report_logs').insert([{
         incident_id: insertedIncident.id,
         user_id: user.id,

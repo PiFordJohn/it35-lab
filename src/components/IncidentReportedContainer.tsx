@@ -1,4 +1,3 @@
-// IncidentReportedContainer.tsx
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabaseClient';
 import {
@@ -21,6 +20,14 @@ interface Incident {
 const IncidentReportedContainer: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
 
+  const resolveImageUrl = (imagePath: string): string => {
+    const { data } = supabase
+      .storage
+      .from('incident-images')
+      .getPublicUrl(imagePath);
+    return data?.publicUrl || imagePath;
+  };
+
   const fetchIncidents = async () => {
     const { data, error } = await supabase
       .from('incidents')
@@ -32,16 +39,12 @@ const IncidentReportedContainer: React.FC = () => {
       return;
     }
 
-    const updated = data.map((incident) => {
-      if (incident.image_url && !incident.image_url.startsWith('http')) {
-        const { data: { publicUrl } } = supabase
-          .storage
-          .from('incident-images')
-          .getPublicUrl(incident.image_url);
-        return { ...incident, image_url: publicUrl };
-      }
-      return incident;
-    });
+    const updated = data.map((incident) => ({
+      ...incident,
+      image_url: incident.image_url && !incident.image_url.startsWith('http')
+        ? resolveImageUrl(incident.image_url)
+        : incident.image_url,
+    }));
 
     setIncidents(updated as Incident[]);
   };
@@ -58,13 +61,8 @@ const IncidentReportedContainer: React.FC = () => {
       }, payload => {
         const newIncident = payload.new;
 
-        // Convert image_url to public URL if needed
         if (newIncident.image_url && !newIncident.image_url.startsWith('http')) {
-          const { data: { publicUrl } } = supabase
-            .storage
-            .from('incident-images')
-            .getPublicUrl(newIncident.image_url);
-          newIncident.image_url = publicUrl;
+          newIncident.image_url = resolveImageUrl(newIncident.image_url);
         }
 
         setIncidents(prev => [newIncident as Incident, ...prev]);
